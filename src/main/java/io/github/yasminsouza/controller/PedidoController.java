@@ -9,6 +9,8 @@ import io.github.yasminsouza.service.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
@@ -20,7 +22,7 @@ public class PedidoController {
     }
 
     @PostMapping
-    public Integer save(@RequestBody PedidoDTO pedidoDTO){
+    public Integer save(@RequestBody @Valid PedidoDTO pedidoDTO){
         Pedido pedido = pedidoService.salvar(pedidoDTO);
         return pedido.getId();
     }
