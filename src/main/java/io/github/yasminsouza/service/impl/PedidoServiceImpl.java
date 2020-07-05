@@ -7,11 +7,11 @@ import io.github.yasminsouza.dto.PedidoDTO;
 import io.github.yasminsouza.enums.StatusPedido;
 import io.github.yasminsouza.exception.NotFoundException;
 import io.github.yasminsouza.exception.RegraNegocioException;
-import io.github.yasminsouza.model.Cliente;
+import io.github.yasminsouza.model.Client;
 import io.github.yasminsouza.model.ItemPedido;
 import io.github.yasminsouza.model.Pedido;
 import io.github.yasminsouza.model.Product;
-import io.github.yasminsouza.repository.ClienteRepository;
+import io.github.yasminsouza.repository.ClientRepository;
 import io.github.yasminsouza.repository.ItemPedidoRepository;
 import io.github.yasminsouza.repository.PedidoRepository;
 import io.github.yasminsouza.repository.ProductRepository;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
 
-    private final ClienteRepository clienteRepository;
+    private final ClientRepository clientRepository;
     private final ProductRepository productRepository;
     private final ItemPedidoRepository itemPedidoRepository;
     private final PedidoRepository pedidoRepository;
@@ -37,12 +37,12 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     @Transactional
     public Pedido salvar(PedidoDTO dto) {
-        Cliente cliente = clienteRepository
+        Client client = clientRepository
                 .findById(dto.getCliente())
                 .orElseThrow(() -> new RegraNegocioException("Código de cliente inválido"));
 
         Pedido pedido = Pedido.builder()
-            .cliente(cliente)
+            .client(client)
             .dataPedido(LocalDate.now())
             .status(StatusPedido.REALIZADO)
             .build();
@@ -69,7 +69,7 @@ public class PedidoServiceImpl implements PedidoService {
 
         return InformacoesPedidoDTO.builder()
             .id(pedido.getId())
-            .cliente(pedido.getCliente().getNome())
+            .cliente(pedido.getClient().getName())
             .data(pedido.getDataPedido())
             .status(pedido.getStatus())
             .total(pedido.getTotal())
