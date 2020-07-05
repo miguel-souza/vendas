@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Produto {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,8 +20,8 @@ public class Produto {
     private Integer id;
 
     @Column(name = "descricao")
-    private String descricao;
+    private String description;
 
     @Column(name = "preco_unitario")
-    private BigDecimal preco;
+    private BigDecimal price;
 }
