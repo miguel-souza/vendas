@@ -7,14 +7,14 @@ import io.github.yasminsouza.dto.PedidoDTO;
 import io.github.yasminsouza.enums.StatusPedido;
 import io.github.yasminsouza.exception.NotFoundException;
 import io.github.yasminsouza.exception.RegraNegocioException;
-import io.github.yasminsouza.model.Cliente;
+import io.github.yasminsouza.model.Client;
 import io.github.yasminsouza.model.ItemPedido;
 import io.github.yasminsouza.model.Pedido;
-import io.github.yasminsouza.model.Produto;
-import io.github.yasminsouza.repository.ClienteRepository;
+import io.github.yasminsouza.model.Product;
+import io.github.yasminsouza.repository.ClientRepository;
 import io.github.yasminsouza.repository.ItemPedidoRepository;
 import io.github.yasminsouza.repository.PedidoRepository;
-import io.github.yasminsouza.repository.ProdutoRepository;
+import io.github.yasminsouza.repository.ProductRepository;
 import io.github.yasminsouza.service.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,20 +29,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PedidoServiceImpl implements PedidoService {
 
-    private final ClienteRepository clienteRepository;
-    private final ProdutoRepository produtoRepository;
+    private final ClientRepository clientRepository;
+    private final ProductRepository productRepository;
     private final ItemPedidoRepository itemPedidoRepository;
     private final PedidoRepository pedidoRepository;
 
     @Override
     @Transactional
     public Pedido salvar(PedidoDTO dto) {
-        Cliente cliente = clienteRepository
+        Client client = clientRepository
                 .findById(dto.getCliente())
                 .orElseThrow(() -> new RegraNegocioException("Código de cliente inválido"));
 
         Pedido pedido = Pedido.builder()
-            .cliente(cliente)
+            .client(client)
             .dataPedido(LocalDate.now())
             .status(StatusPedido.REALIZADO)
             .build();
@@ -57,7 +57,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     private BigDecimal getTotal(List<ItemPedido> itens) {
         return itens.stream().map(itemPedido -> {
-            return itemPedido.getProduto().getPreco().multiply(new BigDecimal(itemPedido.getQuantidade()));
+            return itemPedido.getProduct().getPrice().multiply(new BigDecimal(itemPedido.getQuantidade()));
         }).findAny().get();
     }
 
@@ -69,7 +69,7 @@ public class PedidoServiceImpl implements PedidoService {
 
         return InformacoesPedidoDTO.builder()
             .id(pedido.getId())
-            .cliente(pedido.getCliente().getNome())
+            .cliente(pedido.getClient().getName())
             .data(pedido.getDataPedido())
             .status(pedido.getStatus())
             .total(pedido.getTotal())
@@ -90,8 +90,8 @@ public class PedidoServiceImpl implements PedidoService {
 
     private List<InformacoesItemPedidoDTO> converterItens(List<ItemPedido> itensPedido) {
         return itensPedido.stream().map(itemPedido -> InformacoesItemPedidoDTO.builder()
-                .produto(itemPedido.getProduto().getDescricao())
-                .preco(itemPedido.getProduto().getPreco())
+                .produto(itemPedido.getProduct().getDescription())
+                .preco(itemPedido.getProduct().getPrice())
                 .quantidade(itemPedido.getQuantidade())
                 .build()).collect(Collectors.toList());
     }
@@ -103,11 +103,11 @@ public class PedidoServiceImpl implements PedidoService {
 
         return itensPedidoDTO.stream().map(itemDTO -> {
             ItemPedido item = new ItemPedido();
-            Produto produto = produtoRepository
+            Product product = productRepository
                     .findById(itemDTO.getProduto())
                     .orElseThrow(() -> new RegraNegocioException("Código de produto inválido"));
             item.setPedido(pedido);
-            item.setProduto(produto);
+            item.setProduct(product);
             item.setQuantidade(itemDTO.getQuantidade());
             return item;
         }).collect(Collectors.toList());
