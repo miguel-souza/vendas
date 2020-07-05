@@ -1,7 +1,7 @@
 package io.github.yasminsouza.controller;
 
 import io.github.yasminsouza.exception.ApiErrors;
-import io.github.yasminsouza.exception.PedidoNaoEncontradoException;
+import io.github.yasminsouza.exception.NotFoundException;
 import io.github.yasminsouza.exception.RegraNegocioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,9 +17,9 @@ public class ApplicationControllerAdvice {
         return new ApiErrors(ex.getMessage());
     }
 
-    @ExceptionHandler(PedidoNaoEncontradoException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiErrors handlePedidoNotFoundException(PedidoNaoEncontradoException ex){
+    public ApiErrors handleNotFoundException(NotFoundException ex){
         return new ApiErrors(ex.getMessage());
     }
 }
