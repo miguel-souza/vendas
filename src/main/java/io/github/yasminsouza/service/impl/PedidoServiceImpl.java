@@ -5,7 +5,7 @@ import io.github.yasminsouza.dto.InformacoesPedidoDTO;
 import io.github.yasminsouza.dto.ItemPedidoDTO;
 import io.github.yasminsouza.dto.PedidoDTO;
 import io.github.yasminsouza.enums.StatusPedido;
-import io.github.yasminsouza.exception.PedidoNaoEncontradoException;
+import io.github.yasminsouza.exception.NotFoundException;
 import io.github.yasminsouza.exception.RegraNegocioException;
 import io.github.yasminsouza.model.Cliente;
 import io.github.yasminsouza.model.ItemPedido;
@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,7 +85,7 @@ public class PedidoServiceImpl implements PedidoService {
                     pedido.setStatus(novoStatus);
                     return pedidoRepository.save(pedido);
                 })
-                .orElseThrow(() -> new PedidoNaoEncontradoException());
+                .orElseThrow(() -> new NotFoundException("Pedido não encontrado."));
     }
 
     private List<InformacoesItemPedidoDTO> converterItens(List<ItemPedido> itensPedido) {
